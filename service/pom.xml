@@ -45,6 +45,12 @@
       <groupId>org.ehrbase.openehr.sdk</groupId>
       <artifactId>serialisation</artifactId>
     </dependency>
+
+<dependency>
+    <groupId>org.mongodb</groupId>
+    <artifactId>mongodb-driver-sync</artifactId>
+    <version>4.7.1</version> <!-- Check for the latest version -->
+</dependency>
     <dependency>
       <groupId>org.ehrbase.openehr.sdk</groupId>
       <artifactId>validation</artifactId>

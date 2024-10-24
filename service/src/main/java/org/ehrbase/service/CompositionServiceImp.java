@@ -61,6 +61,7 @@ import org.ehrbase.openehr.sdk.serialisation.xmlencoding.CanonicalXML;
 import org.ehrbase.openehr.sdk.webtemplate.model.WebTemplate;
 import org.ehrbase.openehr.sdk.webtemplate.templateprovider.TemplateProvider;
 import org.ehrbase.repository.CompositionRepository;
+import org.ehrbase.repository.CompositionRepositoryMongo;
 import org.ehrbase.repository.experimental.ItemTagRepository;
 import org.ehrbase.util.UuidGenerator;
 import org.openehr.schemas.v1.OPERATIONALTEMPLATE;
@@ -82,6 +83,7 @@ public class CompositionServiceImp implements CompositionService {
     private final EhrService ehrService;
 
     private final CompositionRepository compositionRepository;
+    private final CompositionRepositoryMongo compositionRepositoryMongo;
     private final ItemTagRepository itemTagRepository;
 
     private final SystemService systemService;
@@ -92,12 +94,14 @@ public class CompositionServiceImp implements CompositionService {
             EhrService ehrService,
             SystemService systemService,
             CompositionRepository compositionRepository,
+            CompositionRepositoryMongo compositionRepositoryMongo,
             ItemTagRepository itemTagRepository) {
 
         this.validationService = validationService;
         this.ehrService = ehrService;
         this.knowledgeCacheService = knowledgeCacheService;
         this.compositionRepository = compositionRepository;
+        this.compositionRepositoryMongo = compositionRepositoryMongo; 
         this.itemTagRepository = itemTagRepository;
         this.systemService = systemService;
     }
@@ -154,6 +158,19 @@ public class CompositionServiceImp implements CompositionService {
         logger.debug("Composition created: id={}", compositionId);
 
         return compositionId;
+    }
+
+    @Override
+    public Optional<UUID> createInMongo(UUID ehrId, Composition objData) {
+        // Use MongoDB to save the composition
+        UUID compositionId = UUID.randomUUID();  // Generate UUID for the composition
+        
+        // Save the composition in MongoDB repository
+        compositionRepositoryMongo.commit(ehrId, objData);
+        
+        logger.debug("Composition created in MongoDB: id={}", compositionId);
+        
+        return Optional.of(compositionId);
     }
 
     private ObjectVersionId checkOrConstructObjectVersionId(@Nullable UIDBasedId uid) {
